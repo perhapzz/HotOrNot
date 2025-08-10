@@ -1,0 +1,221 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* 自定义样式 */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+
+.platform-douyin {
+  @apply bg-black text-white;
+}
+
+.platform-xiaohongshu {
+  @apply bg-red-500 text-white;
+}
+
+/* 分析卡片样式 */
+.analysis-card {
+  @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow;
+}
+
+.score-excellent {
+  @apply text-green-600 bg-green-50 border-green-200;
+}
+
+.score-good {
+  @apply text-blue-600 bg-blue-50 border-blue-200;
+}
+
+.score-average {
+  @apply text-yellow-600 bg-yellow-50 border-yellow-200;
+}
+
+.score-poor {
+  @apply text-red-600 bg-red-50 border-red-200;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary;
+}
+
+/* 响应式表格 */
+.responsive-table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.responsive-table th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.responsive-table td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+/* 图表容器 */
+.chart-container {
+  @apply w-full h-64 sm:h-80 lg:h-96;
+}
+
+/* 标签样式 */
+.tag {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.tag-primary {
+  @apply bg-primary/10 text-primary;
+}
+
+.tag-secondary {
+  @apply bg-secondary text-secondary-foreground;
+}
+
+.tag-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.tag-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.tag-danger {
+  @apply bg-red-100 text-red-800;
+}
+
+/* 小红书热点相关样式 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hotlist-card {
+  @apply transition-all duration-200 ease-in-out hover:transform hover:scale-105;
+}
+
+.hotlist-rank {
+  @apply font-bold text-lg leading-none;
+}
+
+.hotlist-title {
+  @apply text-sm leading-relaxed text-white font-medium;
+}
+
+.hotlist-score {
+  @apply font-bold text-orange-400;
+}
+
+/* 词类型标签样式 */
+.word-type-tag {
+  @apply text-xs font-medium px-2 py-1 rounded-full;
+}
+
+.word-type-爆 {
+  @apply bg-red-500 text-white;
+}
+
+.word-type-热 {
+  @apply bg-orange-500 text-white;
+}
+
+.word-type-新 {
+  @apply bg-green-500 text-white;
+}
+
+.word-type-独家 {
+  @apply bg-purple-500 text-white;
+}
+
+.word-type-default {
+  @apply bg-gray-500 text-white;
+}
+
+/* 滚动条样式 */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* 移动端优化 */
+@media (max-width: 640px) {
+  .mobile-hide {
+    @apply hidden;
+  }
+  
+  .mobile-stack {
+    @apply flex-col space-y-2;
+  }
+}

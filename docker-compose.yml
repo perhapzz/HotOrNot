@@ -1,0 +1,51 @@
+services:
+  # MongoDB 数据库
+  mongodb:
+    image: mongo:7.0
+    container_name: hotornot-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: hotornot
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./docker/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - hotornot-network
+
+  # HotOrNot 应用
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotornot-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      # 这些环境变量将从 .env 文件中读取
+      # - MONGODB_URI, DATABASE_URL
+      # - TIKHUB_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY
+      # - USE_REAL_ANALYSIS, ALLOW_FALLBACK_DATA, etc.
+    depends_on:
+      - mongodb
+    networks:
+      - hotornot-network
+    volumes:
+      # 如果需要持久化日志
+      - ./logs:/app/logs
+
+volumes:
+  mongodb_data:
+    driver: local
+
+networks:
+  hotornot-network:
+    driver: bridge
