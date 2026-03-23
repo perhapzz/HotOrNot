@@ -10,6 +10,10 @@ import { reportWebVitals } from '@/lib/web-vitals';
 export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     reportWebVitals();
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
   }, []);
 
   return <>{children}</>;
