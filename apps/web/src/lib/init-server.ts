@@ -1,5 +1,6 @@
 // 服务器启动初始化脚本
 import { hotlistScheduler } from "./scheduler";
+import { validateEnv } from "./env-validation";
 
 // 初始化服务器端服务
 export async function initializeServerServices() {
@@ -13,6 +14,10 @@ export async function initializeServerServices() {
   console.log("🚀 ===========================================");
 
   try {
+    // 校验环境变量
+    console.log("🔐 校验环境变量...");
+    validateEnv();
+
     // 启动热点数据定时更新服务
     console.log("📅 启动热点数据定时更新服务...");
     await hotlistScheduler.start();

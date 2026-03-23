@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Platform } from "@hotornot/shared";
 import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function HomePageContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -683,8 +684,10 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
 
 export default function HomePage() {
   return (
-    <SearchParamsWrapper>
-      {(searchParams) => <HomePageContent searchParams={searchParams} />}
-    </SearchParamsWrapper>
+    <ErrorBoundary>
+      <SearchParamsWrapper>
+        {(searchParams) => <HomePageContent searchParams={searchParams} />}
+      </SearchParamsWrapper>
+    </ErrorBoundary>
   );
 }

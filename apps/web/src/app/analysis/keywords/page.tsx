@@ -7,6 +7,7 @@ import {
   getPlatformNameByEnum,
 } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [keyword, setKeyword] = useState("");
@@ -915,10 +916,12 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
 
 export default function KeywordsAnalysisPage() {
   return (
-    <SearchParamsWrapper>
-      {(searchParams) => (
-        <KeywordsAnalysisContent searchParams={searchParams} />
-      )}
-    </SearchParamsWrapper>
+    <ErrorBoundary>
+      <SearchParamsWrapper>
+        {(searchParams) => (
+          <KeywordsAnalysisContent searchParams={searchParams} />
+        )}
+      </SearchParamsWrapper>
+    </ErrorBoundary>
   );
 }
