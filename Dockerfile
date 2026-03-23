@@ -1,8 +1,8 @@
 # 使用官方 Node.js 18 Alpine 镜像作为基础镜像
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # 安装 pnpm
-RUN npm install -g pnpm@9.4.0
+RUN npm install -g pnpm@9
 
 # 设置工作目录
 WORKDIR /app
@@ -33,11 +33,11 @@ ENV NODE_ENV=production
 RUN pnpm run build
 
 # 生产阶段
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
 # 安装 pnpm
-RUN npm install -g pnpm@9.4.0
+RUN npm install -g pnpm@9
 
 # 创建非 root 用户
 RUN addgroup --system --gid 1001 nodejs

@@ -9,5 +9,8 @@ export * from "./models/weibo-hotlist";
 export * from "./models/user-analysis-records";
 export * from "./models/batch-analysis";
 export * from "./models/notification-config";
+export * from "./models/team";
+export * from "./models/shared-analysis";
+export * from "./models/api-key";
 export * from "./utils/connection";
 export * from "./migrations/account-analysis-migration";
