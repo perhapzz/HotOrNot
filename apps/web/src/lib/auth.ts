@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+// @ts-ignore — bcryptjs ships its own types but pnpm hoisting may not resolve them
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
