@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
     const authResult = requireAuth(request);
     if (authResult instanceof NextResponse) return authResult;
     const userId = authResult.userId;
-    }
 
     const searchParams = request.nextUrl.searchParams;
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
