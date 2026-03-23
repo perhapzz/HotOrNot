@@ -1,3 +1,5 @@
+const { withSentryConfig } = require("@sentry/nextjs");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@hotornot/shared", "@hotornot/ui", "@hotornot/ai", "@hotornot/database"],
@@ -33,4 +35,14 @@ const nextConfig = {
   compress: true,
 }
 
-module.exports = nextConfig
+module.exports = withSentryConfig(nextConfig, {
+  // Sentry webpack plugin options
+  silent: true,
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+}, {
+  // Sentry SDK options
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+  disableLogger: true,
+});
