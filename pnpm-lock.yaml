@@ -128,6 +128,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.19
+      web-vitals:
+        specifier: ^5.1.0
+        version: 5.1.0
       zod:
         specifier: ^3.22.4
         version: 3.25.76
@@ -8212,6 +8215,10 @@ packages:
   /web-streams-polyfill@4.0.0-beta.3:
     resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
     engines: {node: '>= 14'}
+    dev: false
+
+  /web-vitals@5.1.0:
+    resolution: {integrity: sha512-ArI3kx5jI0atlTtmV0fWU3fjpLmq/nD3Zr1iFFlJLaqa5wLBkUSzINwBPySCX/8jRyjlmy1Volw1kz1g9XE4Jg==}
     dev: false
 
   /webidl-conversions@3.0.1:

@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * 环境变量校验
  *
@@ -82,7 +84,7 @@ export function validateEnv(): void {
   for (const { name, description } of OPTIONAL_ENV_VARS) {
     const value = process.env[name];
     if (!value || isPlaceholder(value)) {
-      console.warn(`⚠️  可选环境变量未配置: ${name} — ${description}`);
+      logger.warn(`可选环境变量未配置: ${name}`, { description });
     }
   }
 
@@ -113,5 +115,5 @@ export function validateEnv(): void {
     throw new Error(lines.join('\n'));
   }
 
-  console.log('✅ 环境变量校验通过');
+  logger.info('环境变量校验通过');
 }
