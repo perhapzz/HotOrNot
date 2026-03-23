@@ -50,9 +50,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme')||'system';var d=t==='system'?window.matchMedia('(prefers-color-scheme:dark)').matches:t==='dark';if(d)document.documentElement.classList.add('dark')}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className={inter.className}>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background text-foreground">
           <Providers>
             <ErrorBoundary>{children}</ErrorBoundary>
           </Providers>
