@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useToast } from "./Toast";
 
 interface ExportButtonProps {
   type: "content" | "keyword" | "account" | "batch";
@@ -9,6 +10,7 @@ interface ExportButtonProps {
 }
 
 export function ExportButton({ type, id, className = "" }: ExportButtonProps) {
+  const toast = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -27,7 +29,7 @@ export function ExportButton({ type, id, className = "" }: ExportButtonProps) {
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      alert("导出失败，请重试");
+      toast.error("导出失败，请重试");
     } finally {
       setLoading(false);
     }

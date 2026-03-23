@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useToast } from "@/components/Toast";
 
 interface CacheModuleConfig {
   name: string;
@@ -37,6 +38,7 @@ const CACHE_MODULES: CacheModuleConfig[] = [
 ];
 
 export default function CacheManagementPage() {
+  const toast = useToast();
   const [config, setConfig] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(true);
   const [clearing, setClearing] = useState<string | null>(null);
@@ -67,12 +69,12 @@ export default function CacheManagementPage() {
         body: JSON.stringify({ module: moduleKey }),
       });
       if (res.ok) {
-        alert(`${moduleKey} 缓存已清除`);
+        toast.success(`${moduleKey} 缓存已清除`);
       } else {
-        alert("清除失败，请重试");
+        toast.error("清除失败，请重试");
       }
     } catch {
-      alert("请求失败");
+      toast.error("请求失败");
     } finally {
       setClearing(null);
     }

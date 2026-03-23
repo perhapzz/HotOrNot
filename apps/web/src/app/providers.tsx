@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { reportWebVitals } from '@/lib/web-vitals';
+import { ToastProvider } from '@/components/Toast';
 
 /**
  * Client-side providers wrapper.
@@ -12,5 +13,5 @@ export function Providers({ children }: { children: React.ReactNode }) {
     reportWebVitals();
   }, []);
 
-  return <>{children}</>;
+  return <ToastProvider>{children}</ToastProvider>;
 }
