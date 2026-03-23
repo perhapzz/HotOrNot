@@ -5,5 +5,6 @@ export * from "./models/user";
 export * from "./models/xiaohongshu-hotlist";
 export * from "./models/douyin-hotlist";
 export * from "./models/user-analysis-records";
+export * from "./models/batch-analysis";
 export * from "./utils/connection";
 export * from "./migrations/account-analysis-migration";
