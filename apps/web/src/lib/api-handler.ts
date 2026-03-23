@@ -38,7 +38,8 @@ type HandlerFn = (
  * - Production error sanitization
  */
 export function withApiHandler(handler: HandlerFn, options: HandlerOptions = {}) {
-  return async (request: NextRequest, routeContext?: { params?: any }) => {
+    return async (request: NextRequest, routeContext?: { params?: any }) => {
+    let user: TokenPayload | null = null;
     try {
       // Database connection
       if (!options.skipDb) {
@@ -46,9 +47,7 @@ export function withApiHandler(handler: HandlerFn, options: HandlerOptions = {})
       }
 
       // Authentication
-      let user: TokenPayload | null = null;
-
-      if (options.admin) {
+            if (options.admin) {
         const result = requireAdmin(request);
         if (result instanceof NextResponse) return result;
         user = result;
