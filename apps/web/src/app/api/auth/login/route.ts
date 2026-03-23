@@ -37,8 +37,10 @@ export async function POST(request: NextRequest) {
       if (user.password === legacyHash) {
         // Migrate to bcrypt on successful legacy login
         const { hashPassword } = await import("../../../../lib/auth");
-        user.password = await hashPassword(password);
-        await user.save();
+        const newHash = await hashPassword(password);
+        await User.updateOne({ _id: user._id }, { password: newHash });
+        console.log(`[AUTH] Password migrated to bcrypt for user ${user._id} (${user.email})`);
+        user.password = newHash;
       } else {
         return NextResponse.json(
           { success: false, error: "邮箱或密码错误" },
