@@ -150,10 +150,9 @@ export default function ComparePage() {
                         {item.target}
                       </p>
                       <RadarChart
-                        data={result.comparison.dimensions.map((d: string) => ({
+                        dimensions={result.comparison.dimensions.map((d: string) => ({
                           label: d,
                           value: item.scores[d] || 0,
-                          maxValue: 100,
                         }))}
                         size={200}
                       />
