@@ -69,8 +69,26 @@ docker-compose up -d --build
 ## 🔒 安全提醒
 
 - ✅ 所有 `.env*` 文件已在 `.gitignore` 中
-- ✅ 真实API密钥不会被提交到Git
+- ✅ `.env.example` 仅包含占位符，不含真实密钥
+- ✅ 启动时自动校验必需环境变量（`env-validation.ts`）
 - ⚠️ 生产环境请使用环境变量注入，不要直接使用文件配置
+- ⚠️ 切勿将真实 API Key 提交到 Git
+
+### 必需环境变量
+
+| 变量 | 说明 | 示例 |
+|------|------|------|
+| `MONGODB_URI` | MongoDB 连接字符串 | `mongodb://localhost:27017/hotornot` |
+| `TIKHUB_API_KEY` | TikHub API 密钥 | 在 https://tikhub.io 申请 |
+| `GEMINI_API_KEY` | Google Gemini API 密钥 | 在 Google AI Studio 申请 |
+| `JWT_SECRET` | JWT 签名密钥 | `openssl rand -base64 32` 生成 |
+
+### 可选环境变量
+
+| 变量 | 说明 |
+|------|------|
+| `IP_HASH_SALT` | IP 地址哈希盐值，用于用户隐私保护 |
+| `OPENAI_API_KEY` | OpenAI API 密钥（可选 AI 服务） |
 
 ## 📝 配置完成确认
 
