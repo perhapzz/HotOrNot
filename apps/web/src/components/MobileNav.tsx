@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/analysis/keywords", label: "关键词分析" },
   { href: "/analysis/batch", label: "批量分析" },
   { href: "/dashboard", label: "数据大屏" },
+  { href: "/dashboard/my", label: "我的面板" },
 ];
 
 export function MobileNav() {
