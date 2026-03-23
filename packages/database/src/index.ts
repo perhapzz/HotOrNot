@@ -8,5 +8,6 @@ export * from "./models/bilibili-hotlist";
 export * from "./models/weibo-hotlist";
 export * from "./models/user-analysis-records";
 export * from "./models/batch-analysis";
+export * from "./models/notification-config";
 export * from "./utils/connection";
 export * from "./migrations/account-analysis-migration";
