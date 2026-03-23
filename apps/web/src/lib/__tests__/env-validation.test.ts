@@ -64,12 +64,9 @@ describe('validateEnv', () => {
     process.env.JWT_SECRET = 'secret';
     delete process.env.IP_HASH_SALT;
 
-    // logger.warn calls console.warn in dev mode
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
-    const logSpy = jest.spyOn(console, 'log').mockImplementation();
     validateEnv();
-    expect(warnSpy).toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('IP_HASH_SALT'));
     warnSpy.mockRestore();
-    logSpy.mockRestore();
   });
 });
