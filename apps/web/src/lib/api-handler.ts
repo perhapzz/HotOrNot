@@ -109,6 +109,27 @@ export function withApiHandler(handler: HandlerFn, options: HandlerOptions = {})
       // Unknown errors — sanitize in production
       console.error("[API Error]", error);
 
+      // Report to Sentry with context tags
+      try {
+        const Sentry = require("@sentry/nextjs");
+        Sentry.withScope((scope: any) => {
+          if (user) {
+            scope.setUser({ id: user.userId });
+            scope.setTag("userId", user.userId);
+          }
+          scope.setTag("api.path", request.nextUrl.pathname);
+          scope.setTag("api.method", request.method);
+          if (request.nextUrl.pathname.includes("/analysis/")) {
+            const pathParts = request.nextUrl.pathname.split("/");
+            const analysisType = pathParts[pathParts.indexOf("analysis") + 1];
+            if (analysisType) scope.setTag("analysisType", analysisType);
+          }
+          Sentry.captureException(error);
+        });
+      } catch {
+        // Sentry not configured — skip silently
+      }
+
       const isDev = process.env.NODE_ENV !== "production";
       return NextResponse.json(
         {
