@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get previous tag
+          PREV_TAG=$(git tag --sort=-version:refname | head -2 | tail -1)
+          CURRENT_TAG=${GITHUB_REF#refs/tags/}
+
+          echo "## Changes in ${CURRENT_TAG}" > CHANGELOG_BODY.md
+          echo "" >> CHANGELOG_BODY.md
+
+          if [ -n "$PREV_TAG" ]; then
+            # Group by conventional commit type
+            for type_label in "feat:✨ Features" "fix:🐛 Bug Fixes" "perf:⚡ Performance" "refactor:♻️ Refactoring" "docs:📝 Documentation" "test:🧪 Tests" "chore:🔧 Chores"; do
+              type="${type_label%%:*}"
+              label="${type_label#*:}"
+              commits=$(git log ${PREV_TAG}..${CURRENT_TAG} --pretty=format:"- %s" --grep="^${type}" 2>/dev/null || true)
+              if [ -n "$commits" ]; then
+                echo "### ${label}" >> CHANGELOG_BODY.md
+                echo "$commits" >> CHANGELOG_BODY.md
+                echo "" >> CHANGELOG_BODY.md
+              fi
+            done
+
+            # Uncategorized
+            other=$(git log ${PREV_TAG}..${CURRENT_TAG} --pretty=format:"- %s" --invert-grep --grep="^feat\|^fix\|^perf\|^refactor\|^docs\|^test\|^chore" 2>/dev/null || true)
+            if [ -n "$other" ]; then
+              echo "### 📦 Other" >> CHANGELOG_BODY.md
+              echo "$other" >> CHANGELOG_BODY.md
+            fi
+          else
+            git log --pretty=format:"- %s" -20 >> CHANGELOG_BODY.md
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG_BODY.md
+          generate_release_notes: false

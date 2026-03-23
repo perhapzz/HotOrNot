@@ -15,5 +15,7 @@ export * from "./models/api-key";
 export * from "./models/user-favorite";
 export * from "./models/feedback";
 export * from "./models/user-activity";
+export * from "./models/user-achievement";
+export * from "./models/subscription";
 export * from "./utils/connection";
 export * from "./migrations/account-analysis-migration";
