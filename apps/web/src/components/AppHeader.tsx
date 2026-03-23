@@ -1,6 +1,7 @@
 "use client";
 
 import { MobileNav } from "./MobileNav";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface AppHeaderProps {
   /** Current page path for active nav highlighting */
@@ -35,14 +36,14 @@ export function AppHeader({
   onLogout,
 }: AppHeaderProps) {
   return (
-    <header className="bg-white shadow-sm border-b relative">
+    <header className="bg-white dark:bg-gray-900 shadow-sm border-b dark:border-gray-700 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <a href="/" className="text-2xl font-bold text-gray-900">
+            <a href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
               🔥 HotOrNot
             </a>
-            <span className="ml-2 text-sm text-gray-500 hidden sm:inline">
+            <span className="ml-2 text-sm text-gray-500 dark:text-gray-400 hidden sm:inline">
               内容分析平台
             </span>
           </div>
@@ -55,7 +56,7 @@ export function AppHeader({
                   className={
                     activePath === item.href
                       ? "text-blue-700 font-medium text-sm"
-                      : "text-gray-700 hover:text-gray-900 text-sm"
+                      : "text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-sm"
                   }
                 >
                   {item.label}
@@ -64,6 +65,7 @@ export function AppHeader({
             </nav>
 
             <MobileNav />
+            <ThemeToggle />
 
             {/* User auth area */}
             <div className="flex items-center">
@@ -103,7 +105,7 @@ export function AppHeader({
                 </div>
               ) : (
                 <div className="flex items-center space-x-3">
-                  <span className="text-sm text-gray-500 hidden sm:inline">匿名</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline">匿名</span>
                   <a
                     href="/auth"
                     className="text-sm bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
