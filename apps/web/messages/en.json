@@ -1,0 +1,82 @@
+{
+  "nav": {
+    "contentAnalysis": "Content Analysis",
+    "accountAnalysis": "Account Analysis",
+    "keywordAnalysis": "Keyword Analysis",
+    "batchAnalysis": "Batch Analysis",
+    "dashboard": "Dashboard",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "submit": "Submit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "export": "Export",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "anonymousMode": "Anonymous mode",
+    "loginRegister": "Login / Register"
+  },
+  "home": {
+    "title": "Discover",
+    "titleHighlight": "Viral Content",
+    "subtitle": "AI-powered analysis of Douyin, Xiaohongshu and more — data-driven insights for content creators",
+    "startAnalysis": "Start Content Analysis",
+    "inputPlaceholder": "Paste a content link from Douyin, Xiaohongshu, etc...",
+    "analyzeButton": "Analyze",
+    "analyzing": "Analyzing...",
+    "inputHint": "Enter a content link for an AI-powered deep analysis report"
+  },
+  "analysis": {
+    "score": "Overall Score",
+    "pros": "Strengths",
+    "cons": "Weaknesses",
+    "recommendation": "Recommendation",
+    "tags": "Tags",
+    "metrics": "Metrics",
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments",
+    "shares": "Shares"
+  },
+  "batch": {
+    "title": "Batch Analysis",
+    "subtitle": "Submit multiple links or keywords at once, up to 10",
+    "contentType": "Content Analysis (URLs)",
+    "keywordType": "Keyword Analysis",
+    "inputLabel": "Enter URLs (one per line)",
+    "keywordInputLabel": "Enter keywords (one per line)",
+    "startBatch": "Start Batch Analysis",
+    "submitting": "Submitting...",
+    "uploadCSV": "Upload CSV",
+    "pending": "Pending",
+    "processing": "Processing",
+    "completed": "View Result",
+    "failed": "Failed",
+    "newBatch": "Start New Batch"
+  },
+  "notification": {
+    "title": "Notification Settings",
+    "subtitle": "Configure hotlist change alerts via DingTalk, Feishu webhooks, or email",
+    "enableNotifications": "Enable Notifications",
+    "masterToggleDesc": "Master switch — disabling pauses all notifications",
+    "channels": "Notification Channels",
+    "rules": "Watch Rules",
+    "allPlatforms": "All Platforms",
+    "keyword": "Keyword (optional)",
+    "rankChange": "Rank change ≥",
+    "saved": "Saved ✅",
+    "saveFailed": "Save failed"
+  },
+  "platform": {
+    "douyin": "Douyin",
+    "xiaohongshu": "Xiaohongshu",
+    "bilibili": "Bilibili",
+    "weibo": "Weibo"
+  }
+}
