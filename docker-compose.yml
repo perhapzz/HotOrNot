@@ -1,4 +1,20 @@
 services:
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - hotornot-network
+
   # MongoDB 数据库
   mongodb:
     image: mongo:7.0
@@ -72,6 +88,8 @@ services:
 
 volumes:
   mongodb_data:
+    driver: local
+  redis_data:
     driver: local
 
 networks:
