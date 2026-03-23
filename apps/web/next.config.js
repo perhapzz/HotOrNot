@@ -27,7 +27,10 @@ const nextConfig = {
   // 禁用在构建时预渲染API路由
   experimental: {
     serverComponentsExternalPackages: ['mongoose'],
+    optimizePackageImports: ['@hotornot/shared', '@hotornot/ui'],
   },
+  // Compress responses
+  compress: true,
 }
 
 module.exports = nextConfig
