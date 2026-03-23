@@ -37,8 +37,8 @@ jobs:
       - name: Lint
         run: pnpm --filter web lint
 
-      - name: Test
-        run: pnpm --filter web test
+      - name: Test with coverage
+        run: pnpm --filter web test -- --coverage --coverageReporters=text --coverageReporters=lcov
 
       - name: Build
         run: pnpm --filter web build
