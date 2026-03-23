@@ -61,6 +61,21 @@ export default function RootLayout({
         <meta name="theme-color" content="#2563eb" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "HotOrNot",
+              url: SITE_URL,
+              description: "AI 驱动的智能内容分析平台，覆盖小红书、抖音、B站、微博",
+              applicationCategory: "BusinessApplication",
+              operatingSystem: "Web",
+              offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" },
+            }),
+          }}
+        />
       </head>
       <body className={inter.className}>
         <div className="min-h-screen bg-background text-foreground">
