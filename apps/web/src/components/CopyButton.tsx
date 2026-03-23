@@ -31,7 +31,7 @@ export function CopyButton({ text, label = "复制摘要", className = "" }: Cop
 
   return (
     <button
-      onClick={handleCopy}
+      onClick={handleCopy} aria-label="复制到剪贴板"
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg transition-colors ${
         copied
           ? "bg-green-50 border-green-300 text-green-700 dark:bg-green-900/30 dark:text-green-400"

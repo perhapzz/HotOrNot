@@ -219,3 +219,16 @@
     @apply flex-col space-y-2;
   }
 }
+
+/* a11y: focus visible ring */
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-500;
+}
+
+/* a11y: skip-to-content link */
+.skip-link {
+  @apply absolute -top-10 left-4 z-50 bg-blue-600 text-white px-4 py-2 rounded-b-lg transition-all;
+}
+.skip-link:focus {
+  @apply top-0;
+}

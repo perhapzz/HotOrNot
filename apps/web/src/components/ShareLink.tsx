@@ -49,7 +49,7 @@ export function ShareLink({ type, id, className = "" }: ShareLinkProps) {
 
   return (
     <button
-      onClick={handleShare}
+      onClick={handleShare} aria-label="分享链接"
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border rounded-lg transition-colors bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 ${className}`}
     >
       {copied ? "✅ 链接已复制" : "🔗 分享链接"}
