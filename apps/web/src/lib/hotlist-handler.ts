@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { getCacheConfig, isCacheExpired } from "../../cache-manager";
+import { withCacheHeaders, CACHE_PROFILES } from "../../http-cache";
 import mongoose from "mongoose";
 
 interface HotlistConfig {
@@ -41,11 +42,14 @@ export function createHotlistHandler(config: HotlistConfig) {
         latestRecord &&
         !isCacheExpired(latestRecord.fetchedAt, cacheConfig.ttl)
       ) {
-        return NextResponse.json({
-          success: true,
-          data: latestRecord,
-          source: "cache",
-        });
+        return withCacheHeaders(
+          NextResponse.json({
+            success: true,
+            data: latestRecord,
+            source: "cache",
+          }),
+          CACHE_PROFILES.hotlist
+        );
       }
 
       // 2. Fetch fresh data
