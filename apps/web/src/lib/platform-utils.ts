@@ -72,3 +72,15 @@ export function getPlatformNameByEnum(platform: Platform): string {
       return platform;
   }
 }
+
+/**
+ * Detect platform from URL
+ */
+export function detectPlatformFromUrl(url: string): Platform | null {
+  const u = url.toLowerCase();
+  if (u.includes("douyin.com") || u.includes("iesdouyin.com")) return Platform.DOUYIN;
+  if (u.includes("xiaohongshu.com") || u.includes("xhslink.com")) return Platform.XIAOHONGSHU;
+  if (u.includes("bilibili.com") || u.includes("b23.tv")) return Platform.BILIBILI;
+  if (u.includes("weibo.com") || u.includes("weibo.cn")) return Platform.WEIBO;
+  return null;
+}

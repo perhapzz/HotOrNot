@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { href: "/", label: "内容分析" },
   { href: "/analysis/account", label: "账号分析" },
   { href: "/analysis/keywords", label: "关键词分析" },
+  { href: "/analysis/batch", label: "批量分析" },
   { href: "/dashboard", label: "数据大屏" },
 ];
 

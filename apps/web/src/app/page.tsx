@@ -188,6 +188,12 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                   关键词分析
                 </a>
                 <a
+                  href="/analysis/batch"
+                  className="text-gray-700 hover:text-gray-900"
+                >
+                  批量分析
+                </a>
+                <a
                   href="/dashboard"
                   className="text-gray-700 hover:text-gray-900"
                 >

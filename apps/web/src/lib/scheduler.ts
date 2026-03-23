@@ -169,10 +169,12 @@ class HotlistScheduler {
       // 确保数据库连接
       await connectDatabase();
 
-      // 并发更新小红书和抖音热点数据
-      const [xiaohongshuResult, douyinResult] = await Promise.allSettled([
+      // 并发更新所有平台热点数据
+      const [xiaohongshuResult, douyinResult, bilibiliResult, weiboResult] = await Promise.allSettled([
         this.updateXiaohongshuHotlist(),
         this.updateDouyinHotlist(),
+        this.updateBilibiliHotlist(),
+        this.updateWeiboHotlist(),
       ]);
 
       // 记录结果
@@ -192,6 +194,22 @@ class HotlistScheduler {
         successCount++;
       } else {
         console.error("❌ 抖音热点数据更新失败:", douyinResult.reason);
+        failCount++;
+      }
+
+      if (bilibiliResult.status === "fulfilled") {
+        console.log("✅ B站热点数据更新成功");
+        successCount++;
+      } else {
+        console.error("❌ B站热点数据更新失败:", bilibiliResult.reason);
+        failCount++;
+      }
+
+      if (weiboResult.status === "fulfilled") {
+        console.log("✅ 微博热点数据更新成功");
+        successCount++;
+      } else {
+        console.error("❌ 微博热点数据更新失败:", weiboResult.reason);
         failCount++;
       }
 
@@ -297,6 +315,67 @@ class HotlistScheduler {
         ? new Date(Date.now() + this.UPDATE_INTERVAL).toISOString()
         : null,
     };
+  }
+
+  private async updateBilibiliHotlist() {
+    const { BilibiliHotList } = await import("@hotornot/database");
+    const res = await fetch("https://api.bilibili.com/x/web-interface/ranking/v2", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        Referer: "https://www.bilibili.com",
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`Bilibili API error: ${res.status}`);
+    const data = await res.json();
+    if (data.code !== 0 || !data.data?.list) throw new Error("Invalid Bilibili response");
+
+    const items = data.data.list.slice(0, 50).map((item: any, i: number) => ({
+      title: item.title,
+      url: `https://www.bilibili.com/video/${item.bvid}`,
+      pic: item.pic,
+      desc: item.desc,
+      stat: { view: item.stat?.view || 0, like: item.stat?.like || 0, danmaku: item.stat?.danmaku || 0 },
+      score: item.score || 0,
+      rank: i + 1,
+    }));
+
+    await BilibiliHotList.create({
+      hot_list_id: "bilibili_ranking",
+      title: "B站热门排行",
+      items,
+      fetchedAt: new Date(),
+    });
+  }
+
+  private async updateWeiboHotlist() {
+    const { WeiboHotList } = await import("@hotornot/database");
+    const res = await fetch("https://weibo.com/ajax/side/hotSearch", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        Referer: "https://weibo.com",
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`Weibo API error: ${res.status}`);
+    const data = await res.json();
+    if (!data.data?.realtime) throw new Error("Invalid Weibo response");
+
+    const items = data.data.realtime.slice(0, 50).map((item: any, i: number) => ({
+      title: item.note || item.word,
+      url: `https://s.weibo.com/weibo?q=${encodeURIComponent(item.word || item.note)}`,
+      hotValue: item.num || item.raw_hot || 0,
+      category: item.category || "",
+      icon: item.icon_desc || "",
+      rank: i + 1,
+    }));
+
+    await WeiboHotList.create({
+      hot_list_id: "weibo_hotsearch",
+      title: "微博热搜",
+      items,
+      fetchedAt: new Date(),
+    });
   }
 }
 
