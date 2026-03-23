@@ -78,9 +78,10 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
+        <a href="#main-content" className="skip-link">跳转到主内容</a>
         <div className="min-h-screen bg-background text-foreground">
           <Providers>
-            <ErrorBoundary>{children}</ErrorBoundary>
+            <ErrorBoundary><main id="main-content">{children}</main></ErrorBoundary>
           </Providers>
         </div>
       </body>
