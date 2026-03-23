@@ -8,6 +8,7 @@ import {
 } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { MobileNav } from "@/components/MobileNav";
 
 function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [keyword, setKeyword] = useState("");
@@ -257,7 +258,7 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -290,6 +291,7 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
                   数据大屏
                 </a>
               </nav>
+              <MobileNav />
 
               {/* 用户状态 */}
               <div className="flex items-center">
