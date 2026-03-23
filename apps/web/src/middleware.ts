@@ -46,19 +46,6 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-RateLimit-Limit', String(result.limit));
   response.headers.set('X-RateLimit-Remaining', String(result.remaining));
 
-  // Cache-Control for cacheable GET routes
-  if (request.method === 'GET') {
-    if (pathname.startsWith('/api/hotlist')) {
-      response.headers.set('Cache-Control', 'public, s-maxage=180, stale-while-revalidate=600');
-    } else if (pathname.startsWith('/api/dashboard')) {
-      response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
-    } else if (pathname.startsWith('/api/cache/config')) {
-      response.headers.set('Cache-Control', 'public, s-maxage=300');
-    } else if (pathname.startsWith('/api/health')) {
-      response.headers.set('Cache-Control', 'no-cache');
-    }
-  }
-
   const duration = Date.now() - start;
   logRequest(method, pathname, 200, duration);
 
