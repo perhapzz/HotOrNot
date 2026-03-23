@@ -473,6 +473,31 @@ pnpm dev
 # 访问 http://localhost:3000
 ```
 
+## 🐳 Docker 部署
+
+```bash
+# 开发环境（含 MongoDB）
+docker compose up -d
+
+# 开发环境 + MongoDB 管理界面（mongo-express on :8081）
+docker compose --profile debug up -d
+
+# 生产环境
+cp .env.example .env  # 编辑配置
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+**生产环境必须设置的环境变量：**
+- `MONGO_ROOT_PASSWORD` — MongoDB root 密码
+- `JWT_SECRET` — JWT 签名密钥
+- API keys（GEMINI / OPENAI / TIKHUB）
+
+**数据库备份/恢复：**
+```bash
+./scripts/backup-db.sh                    # 备份（自动保留 7 天）
+./scripts/restore-db.sh backups/xxx.tar.gz  # 恢复
+```
+
 ---
 
 **🌟 如果这个项目对您有帮助，请给个 Star 支持一下！**

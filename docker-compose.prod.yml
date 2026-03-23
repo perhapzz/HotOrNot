@@ -1,88 +1,45 @@
+# Production overrides — use with:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
 services:
-  # MongoDB 数据库 (生产环境)
   mongodb:
-    image: mongo:7.0
     container_name: hotornot-mongodb-prod
-    restart: unless-stopped
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-change-this-password}
-      MONGO_INITDB_DATABASE: hotornot
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Set MONGO_ROOT_PASSWORD in .env}
     ports:
-      # 生产环境不暴露MongoDB端口
+      # Production: bind to localhost only
       - "127.0.0.1:27017:27017"
-    volumes:
-      - mongodb_prod_data:/data/db
-      - ./docker/mongo-init:/docker-entrypoint-initdb.d
-    networks:
-      - hotornot-prod-network
     deploy:
       resources:
         limits:
           memory: 512M
-          cpus: '0.25'
+          cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
-  # HotOrNot 应用 (生产环境)
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: hotornot-web-prod
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
+    restart: always
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-change-this-password}@mongodb:27017/hotornot?authSource=admin
-      - JWT_SECRET=${JWT_SECRET:-change-this-jwt-secret-in-production}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-change-this-nextauth-secret-in-production}
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://your-domain.com}
-      # API Keys
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-      - TIKHUB_API_KEY=${TIKHUB_API_KEY:-}
-      - TIKHUB_XIAOHONGSHU_SEARCH_API_URL=https://api.tikhub.io/api/v1/xiaohongshu/web_v2/fetch_search_notes
-    depends_on:
-      - mongodb
-    networks:
-      - hotornot-prod-network
-    volumes:
-      # 生产环境日志
-      - ./logs:/app/logs
+      - MONGODB_URI=mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD}@mongodb:27017/hotornot?authSource=admin
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET in .env}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://hotornot.app}
     deploy:
       resources:
         limits:
           memory: 1G
-          cpus: '0.5'
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+          cpus: "1.0"
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "5"
 
-  # Nginx 反向代理 (可选)
-  nginx:
-    image: nginx:alpine
-    container_name: hotornot-nginx-prod
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - web
-    networks:
-      - hotornot-prod-network
-
-volumes:
-  mongodb_prod_data:
-    driver: local
-
-networks:
-  hotornot-prod-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+  # No mongo-express in production (profile=debug not activated)

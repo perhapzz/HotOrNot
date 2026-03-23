@@ -15,6 +15,11 @@ services:
       - ./docker/mongo-init:/docker-entrypoint-initdb.d
     networks:
       - hotornot-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
 
   # HotOrNot 应用
   web:
@@ -30,17 +35,40 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      # 这些环境变量将从 .env 文件中读取
-      # - MONGODB_URI, DATABASE_URL
-      # - TIKHUB_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY
-      # - USE_REAL_ANALYSIS, ALLOW_FALLBACK_DATA, etc.
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     networks:
       - hotornot-network
     volumes:
-      # 如果需要持久化日志
       - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # MongoDB 管理界面（开发环境可选）
+  mongo-express:
+    image: mongo-express:1
+    container_name: hotornot-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: hotornot
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - hotornot-network
+    profiles:
+      - debug
 
 volumes:
   mongodb_data:
