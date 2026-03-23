@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Platform } from "@hotornot/shared";
 import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -777,8 +778,10 @@ function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
 
 export default function AccountAnalysisPage() {
   return (
-    <SearchParamsWrapper>
-      {(searchParams) => <AccountAnalysisContent searchParams={searchParams} />}
-    </SearchParamsWrapper>
+    <ErrorBoundary>
+      <SearchParamsWrapper>
+        {(searchParams) => <AccountAnalysisContent searchParams={searchParams} />}
+      </SearchParamsWrapper>
+    </ErrorBoundary>
   );
 }
