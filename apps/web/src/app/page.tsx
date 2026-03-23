@@ -5,7 +5,7 @@ import { Platform } from "@hotornot/shared";
 import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { MobileNav } from "@/components/MobileNav";
+import { AppHeader } from "@/components/AppHeader";
 
 function HomePageContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -162,99 +162,13 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">HotOrNot</h1>
-              <span className="ml-2 text-sm text-gray-500">内容分析平台</span>
-            </div>
-            <div className="flex items-center space-x-4 md:space-x-8">
-              <nav className="hidden md:flex space-x-8">
-                <a href="/" className="text-blue-700 font-medium">
-                  内容分析
-                </a>
-                <a
-                  href="/analysis/account"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  账号分析
-                </a>
-                <a
-                  href="/analysis/keywords"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  关键词分析
-                </a>
-                <a
-                  href="/analysis/batch"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  批量分析
-                </a>
-                <a
-                  href="/dashboard"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  数据大屏
-                </a>
-              </nav>
-
-              <MobileNav />
-
-              {/* 用户状态 - 可选登录 */}
-              <div className="flex items-center">
-                {isCheckingAuth ? (
-                  <div className="text-sm text-gray-500">
-                    <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
-                  </div>
-                ) : isLoggedIn ? (
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                        {user?.displayName?.[0] || user?.username?.[0] || "U"}
-                      </div>
-                      <div className="hidden md:block text-sm">
-                        <div className="font-medium text-gray-900">
-                          {user?.displayName || user?.username}
-                        </div>
-                        <div className="text-gray-500 text-xs">
-                          {user?.subscription?.plan || "free"} · 已登录
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <a
-                        href="/history"
-                        className="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md px-3 py-1 hover:border-gray-400 transition-colors"
-                      >
-                        历史记录
-                      </a>
-                      <button
-                        onClick={handleLogout}
-                        className="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md px-3 py-1 hover:border-gray-400 transition-colors"
-                      >
-                        登出
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-3">
-                    <div className="text-sm text-gray-500">匿名模式</div>
-                    <a
-                      href="/auth"
-                      className="text-sm bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                      登录/注册
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        activePath="/"
+        isCheckingAuth={isCheckingAuth}
+        isLoggedIn={isLoggedIn}
+        user={user}
+        onLogout={handleLogout}
+      />
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

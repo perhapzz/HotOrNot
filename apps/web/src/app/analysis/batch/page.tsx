@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { MobileNav } from "@/components/MobileNav";
+import { AppHeader } from "@/components/AppHeader";
 
 interface BatchItem {
   index: number;
@@ -130,50 +130,7 @@ export default function BatchAnalysisPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <header className="bg-white shadow-sm border-b relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <a href="/" className="text-2xl font-bold text-gray-900">
-                HotOrNot
-              </a>
-              <span className="ml-2 text-sm text-gray-500">批量分析</span>
-            </div>
-            <div className="flex items-center space-x-4 md:space-x-8">
-              <nav className="hidden md:flex space-x-8">
-                <a href="/" className="text-gray-700 hover:text-gray-900">
-                  内容分析
-                </a>
-                <a
-                  href="/analysis/account"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  账号分析
-                </a>
-                <a
-                  href="/analysis/keywords"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  关键词分析
-                </a>
-                <a
-                  href="/analysis/batch"
-                  className="text-blue-700 font-medium"
-                >
-                  批量分析
-                </a>
-                <a
-                  href="/dashboard"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  数据大屏
-                </a>
-              </nav>
-              <MobileNav />
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader activePath="/analysis/batch" />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">

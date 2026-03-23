@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { AppHeader } from "@/components/AppHeader";
 import {
   LineChart,
   Line,
@@ -105,26 +106,7 @@ export default function MyDashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-6">
-              <Link href="/" className="text-xl font-bold text-indigo-600">
-                🔥 HotOrNot
-              </Link>
-              <nav className="hidden md:flex items-center gap-4 text-sm">
-                <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
-                  全局看板
-                </Link>
-                <span className="text-indigo-600 font-medium">我的面板</span>
-                <Link href="/analysis/batch" className="text-gray-600 hover:text-gray-900">
-                  批量分析
-                </Link>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader activePath="/dashboard/my" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">📊 我的分析面板</h1>
