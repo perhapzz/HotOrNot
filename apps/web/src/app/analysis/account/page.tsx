@@ -6,6 +6,9 @@ import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppHeader } from "@/components/AppHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { useHistory } from "@/hooks/useHistory";
+import { jumpToElement } from "@/lib/dom-utils";
 
 function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -13,14 +16,8 @@ function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [error, setError] = useState<string>("");
 
-  // 用户状态（可选）
-  const [user, setUser] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // 历史记录状态
-  const [accountHistory, setAccountHistory] = useState<any[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const { user, isLoggedIn, isCheckingAuth, handleLogout } = useAuth();
+  const { history: accountHistory, isLoading: isLoadingHistory, refresh: refreshHistory } = useHistory("account", isLoggedIn, isCheckingAuth);
 
   // 处理URL参数
   useEffect(() => {
@@ -71,7 +68,7 @@ function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
         setAnalysisResult(data.data);
         // 分析完成后刷新历史记录
         if (isLoggedIn) {
-          loadAccountHistory();
+          refreshHistory();
         }
         // 瞬间跳转到分析结果区域
         jumpToElement("analysis-result");
@@ -86,97 +83,11 @@ function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
     }
   };
 
-  // 检查用户登录状态
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "GET",
-        credentials: "include",
-      });
 
-      const data = await response.json();
 
-      if (data.success && data.data.authenticated) {
-        setUser(data.data.user);
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      console.log("用户未登录，将以匿名模式使用");
-    } finally {
-      setIsCheckingAuth(false);
-    }
-  };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("登出失败:", error);
-    }
-  };
-
-  // 加载账号分析历史记录
-  const loadAccountHistory = async () => {
-    if (!isLoggedIn) return;
-
-    setIsLoadingHistory(true);
-    try {
-      const response = await fetch("/api/user/history?type=account&limit=5", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (data.success && data.data) {
-        // 设置账号分析记录
-        setAccountHistory(data.data);
-        console.log("📋 加载账号分析历史记录:", data.data.length, "条");
-      } else {
-        setAccountHistory([]);
-      }
-    } catch (error) {
-      console.error("加载历史记录失败:", error);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  };
-
-  // 当用户登录状态改变时，加载历史记录
-  useEffect(() => {
-    if (isLoggedIn && !isCheckingAuth) {
-      loadAccountHistory();
-    } else {
-      setAccountHistory([]);
-    }
-  }, [isLoggedIn, isCheckingAuth]);
-
-  // 瞬间定位到目标位置
-  const jumpToElement = (elementId: string) => {
-    setTimeout(() => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        const elementRect = element.getBoundingClientRect();
-        const elementTop = elementRect.top + window.pageYOffset;
-        const targetScrollY = elementTop - 100; // 定位到元素顶部上方100px处
-
-        window.scrollTo({
-          top: targetScrollY,
-          behavior: "instant", // 瞬间跳转
-        });
-      }
-    }, 100); // 短暂延迟确保DOM更新
-  };
+  
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -200,7 +111,7 @@ function AccountAnalysisContent({ searchParams }: { searchParams: any }) {
         setAnalysisResult(data.data);
         // 分析完成后刷新历史记录
         if (isLoggedIn) {
-          loadAccountHistory();
+          refreshHistory();
         }
         // 瞬间跳转到分析结果区域
         jumpToElement("analysis-result");

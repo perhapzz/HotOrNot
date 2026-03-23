@@ -9,6 +9,9 @@ import {
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppHeader } from "@/components/AppHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { useHistory } from "@/hooks/useHistory";
+import { jumpToElement } from "@/lib/dom-utils";
 
 function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [keyword, setKeyword] = useState("");
@@ -19,19 +22,8 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [error, setError] = useState<string>("");
 
-  // 用户状态（可选）
-  const [user, setUser] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // 历史记录状态
-  const [keywordHistory, setKeywordHistory] = useState<any[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-
-  // 检查用户登录状态
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  const { user, isLoggedIn, isCheckingAuth, handleLogout } = useAuth();
+  const { history: keywordHistory, isLoading: isLoadingHistory, refresh: refreshHistory } = useHistory("keyword", isLoggedIn, isCheckingAuth);
 
   // 处理URL参数
   useEffect(() => {
@@ -58,110 +50,13 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
     }
   }, [searchParams]);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "GET",
-        credentials: "include",
-      });
 
-      const data = await response.json();
 
-      if (data.success && data.data.authenticated) {
-        setUser(data.data.user);
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      console.log("用户未登录，将以匿名模式使用");
-    } finally {
-      setIsCheckingAuth(false);
-    }
-  };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("登出失败:", error);
-    }
-  };
-
-  // 加载关键词分析历史记录
-  const loadKeywordHistory = async () => {
-    if (!isLoggedIn) return;
-
-    console.log("🔄 开始加载关键词分析历史记录...");
-    setIsLoadingHistory(true);
-    try {
-      const response = await fetch("/api/user/history?type=keyword&limit=5", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      console.log("📡 历史记录API响应状态:", response.status);
-      const data = await response.json();
-      console.log("📊 历史记录API响应数据:", data);
-
-      if (data.success && data.data && data.data.analyses) {
-        // 设置关键词分析记录 - 注意这里应该是 data.data.analyses
-        setKeywordHistory(data.data.analyses);
-        console.log(
-          "✅ 成功加载关键词分析历史记录:",
-          data.data.analyses.length,
-          "条",
-        );
-        console.log("📋 历史记录详情:", data.data.analyses);
-      } else {
-        console.log("⚠️ 没有找到关键词分析历史记录");
-        setKeywordHistory([]);
-      }
-    } catch (error) {
-      console.error("❌ 加载历史记录失败:", error);
-      setKeywordHistory([]);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  };
-
-  // 当用户登录状态改变时，加载历史记录
-  useEffect(() => {
-    if (isLoggedIn && !isCheckingAuth) {
-      loadKeywordHistory();
-    } else {
-      setKeywordHistory([]);
-    }
-  }, [isLoggedIn, isCheckingAuth]);
-
-  const handlePlatformSelect = (platform: Platform) => {
+    const handlePlatformSelect = (platform: Platform) => {
     setSelectedPlatform(platform);
   };
 
-  // 瞬间定位到目标位置
-  const jumpToElement = (elementId: string) => {
-    setTimeout(() => {
-      const element = document.getElementById(elementId);
-      console.log("🎯 尝试跳转到元素:", elementId, element);
-      if (element) {
-        const elementRect = element.getBoundingClientRect();
-        const elementTop = elementRect.top + window.pageYOffset;
-        const targetScrollY = elementTop - 100; // 定位到元素顶部上方100px处
-
-        console.log("📍 跳转位置:", targetScrollY);
-        window.scrollTo({
-          top: targetScrollY,
-          behavior: "instant", // 瞬间跳转
-        });
-      } else {
-        console.log("❌ 未找到目标元素:", elementId);
-      }
-    }, 200); // 增加延迟确保DOM完全更新
-  };
 
   const handleAnalyze = async () => {
     if (!keyword.trim()) return;
@@ -188,7 +83,7 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
         setAnalysisResult(data.data);
         // 分析完成后刷新历史记录
         if (isLoggedIn) {
-          loadKeywordHistory();
+          refreshHistory();
         }
         // 瞬间跳转到分析结果区域
         jumpToElement("analysis-result");

@@ -6,6 +6,9 @@ import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AppHeader } from "@/components/AppHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { useHistory } from "@/hooks/useHistory";
+import { jumpToElement } from "@/lib/dom-utils";
 
 function HomePageContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -13,19 +16,8 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [error, setError] = useState<string>("");
 
-  // 用户状态（可选）
-  const [user, setUser] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // 历史记录状态
-  const [contentHistory, setContentHistory] = useState<any[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-
-  // 检查用户登录状态（静默检查，不影响使用）
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  const { user, isLoggedIn, isCheckingAuth, handleLogout } = useAuth();
+  const { history: contentHistory, isLoading: isLoadingHistory, refresh: refreshHistory } = useHistory("content", isLoggedIn, isCheckingAuth);
 
   // 处理URL参数
   useEffect(() => {
@@ -39,89 +31,10 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
     }
   }, [searchParams]);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "GET",
-        credentials: "include",
-      });
 
-      const data = await response.json();
 
-      if (data.success && data.data.authenticated) {
-        setUser(data.data.user);
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      // 静默失败，不影响匿名用户使用
-      console.log("用户未登录，将以匿名模式使用");
-    } finally {
-      setIsCheckingAuth(false);
-    }
-  };
 
-  // 加载内容分析历史记录
-  const loadContentHistory = async () => {
-    if (!isLoggedIn) return;
 
-    setIsLoadingHistory(true);
-    try {
-      const response = await fetch("/api/user/history?type=content&limit=5", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setContentHistory(data.data.analyses || []);
-      }
-    } catch (error) {
-      console.error("加载历史记录失败:", error);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  };
-
-  // 当用户登录状态改变时，加载历史记录
-  useEffect(() => {
-    if (isLoggedIn && !isCheckingAuth) {
-      loadContentHistory();
-    } else {
-      setContentHistory([]);
-    }
-  }, [isLoggedIn, isCheckingAuth]);
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("登出失败:", error);
-    }
-  };
-
-  // 瞬间定位到目标位置
-  const jumpToElement = (elementId: string) => {
-    setTimeout(() => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        const elementRect = element.getBoundingClientRect();
-        const elementTop = elementRect.top + window.pageYOffset;
-        const targetScrollY = elementTop - 100; // 定位到元素顶部上方100px处
-
-        window.scrollTo({
-          top: targetScrollY,
-          behavior: "instant", // 瞬间跳转
-        });
-      }
-    }, 100); // 短暂延迟确保DOM更新
-  };
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -145,7 +58,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
         setAnalysisResult(data.data);
         // 分析完成后刷新历史记录
         if (isLoggedIn) {
-          loadContentHistory();
+          refreshHistory();
         }
         // 瞬间跳转到分析结果区域
         jumpToElement("analysis-result");
@@ -541,7 +454,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                               });
                               // 查看缓存数据时也需要刷新历史记录（记录这次访问）
                               if (isLoggedIn) {
-                                loadContentHistory();
+                                refreshHistory();
                               }
                               // 瞬间跳转到分析结果区域
                               jumpToElement("analysis-result");
