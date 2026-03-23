@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@hotornot/database";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
-
-// 简化版密码加密
-function simpleHash(password: string): string {
-  return Buffer.from(password).toString("base64");
-}
+import { hashPassword } from "../../../../lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 创建新用户
-    const hashedPassword = simpleHash(password);
+    const hashedPassword = await hashPassword(password);
     const newUser = new User({
       email,
       username,

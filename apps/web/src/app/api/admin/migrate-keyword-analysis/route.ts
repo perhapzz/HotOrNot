@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { KeywordAnalysis } from "@hotornot/database";
+import { requireAdmin } from "../../../../../lib/auth";
 
 export async function POST(request: NextRequest) {
+  const authResult = requireAdmin(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     console.log("🔄 开始数据库迁移：为 keyword_analyses 集合添加图片字段");
 

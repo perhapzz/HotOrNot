@@ -1,7 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { hotlistScheduler } from "../../../../lib/scheduler";
+import { requireAdmin } from "../../../../lib/auth";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
+  const authResult = requireAdmin(request);
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     console.log("🔄 手动触发服务器初始化...");
 

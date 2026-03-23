@@ -1,23 +1,15 @@
+import { getUserFromRequest } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { ApiKey } from "@hotornot/database";
 import crypto from "crypto";
 
-function getUserIdFromToken(request: NextRequest): string | null {
-  const token = request.cookies.get("auth-token")?.value;
-  if (!token) return null;
-  try {
-    return JSON.parse(Buffer.from(token, "base64").toString()).userId;
-  } catch {
-    return null;
-  }
-}
 
 // GET /api/developer/keys — list my API keys
 export async function GET(request: NextRequest) {
   try {
     await connectDatabase();
-    const userId = getUserIdFromToken(request);
+    const userId = getUserFromRequest(request)?.userId ?? null;
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -43,7 +35,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     await connectDatabase();
-    const userId = getUserIdFromToken(request);
+    const userId = getUserFromRequest(request)?.userId ?? null;
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -92,7 +84,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     await connectDatabase();
-    const userId = getUserIdFromToken(request);
+    const userId = getUserFromRequest(request)?.userId ?? null;
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }

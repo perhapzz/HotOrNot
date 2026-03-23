@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/auth";
 import { createAIServiceFromEnv } from "@hotornot/ai";
 import { UrlUtils, Platform, ContentType } from "@hotornot/shared";
 import {
@@ -13,21 +14,8 @@ import {
   getCacheExpiration,
   getCacheAge,
 } from "../../../../lib/cache-manager";
-
-// 获取用户信息的辅助函数
-async function getUserFromToken(request: NextRequest) {
-  try {
-    const token = request.cookies.get("auth-token")?.value;
-    if (!token) return null;
-
-    const payload = JSON.parse(Buffer.from(token, "base64").toString());
-    const { User } = await import("@hotornot/database");
-    const user = await User.findById(payload.userId);
-    return user;
-  } catch (error) {
-    return null;
-  }
-}
+import { getUserFromRequest } from "../../../../lib/auth";
+import { User } from "@hotornot/database";
 
 // 简化的账号ID提取函数
 function extractAccountId(url: string, platform: Platform): string | null {
@@ -262,7 +250,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取用户信息
-    const user = await getUserFromToken(request);
+    const authPayload = getUserFromRequest(request);
+    const user = authPayload ? await User.findById(authPayload.userId) : null;
     const userIP =
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||

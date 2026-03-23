@@ -1,23 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { UserAnalysisRecord } from "@hotornot/database";
-import mongoose from "mongoose";
+import { requireAuth } from "../../../../lib/auth";
 
 export async function GET(request: NextRequest) {
   try {
     await connectDatabase();
 
-    const token = request.cookies.get("auth-token")?.value;
-    if (!token) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
-
-    let userId: string;
-    try {
-      const payload = JSON.parse(Buffer.from(token, "base64").toString());
-      userId = payload.userId;
-    } catch {
-      return NextResponse.json({ success: false, error: "Invalid token" }, { status: 401 });
+    const authResult = requireAuth(request);
+    if (authResult instanceof NextResponse) return authResult;
+    const userId = authResult.userId;
     }
 
     const searchParams = request.nextUrl.searchParams;

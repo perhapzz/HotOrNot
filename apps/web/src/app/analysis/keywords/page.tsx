@@ -8,7 +8,10 @@ import {
 } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { MobileNav } from "@/components/MobileNav";
+import { AppHeader } from "@/components/AppHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { useHistory } from "@/hooks/useHistory";
+import { jumpToElement } from "@/lib/dom-utils";
 
 function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [keyword, setKeyword] = useState("");
@@ -19,19 +22,8 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [error, setError] = useState<string>("");
 
-  // 用户状态（可选）
-  const [user, setUser] = useState<any>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // 历史记录状态
-  const [keywordHistory, setKeywordHistory] = useState<any[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-
-  // 检查用户登录状态
-  useEffect(() => {
-    checkAuthStatus();
-  }, []);
+  const { user, isLoggedIn, isCheckingAuth, handleLogout } = useAuth();
+  const { history: keywordHistory, isLoading: isLoadingHistory, refresh: refreshHistory } = useHistory("keyword", isLoggedIn, isCheckingAuth);
 
   // 处理URL参数
   useEffect(() => {
@@ -58,110 +50,13 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
     }
   }, [searchParams]);
 
-  const checkAuthStatus = async () => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "GET",
-        credentials: "include",
-      });
 
-      const data = await response.json();
 
-      if (data.success && data.data.authenticated) {
-        setUser(data.data.user);
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      console.log("用户未登录，将以匿名模式使用");
-    } finally {
-      setIsCheckingAuth(false);
-    }
-  };
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-
-      setUser(null);
-      setIsLoggedIn(false);
-    } catch (error) {
-      console.error("登出失败:", error);
-    }
-  };
-
-  // 加载关键词分析历史记录
-  const loadKeywordHistory = async () => {
-    if (!isLoggedIn) return;
-
-    console.log("🔄 开始加载关键词分析历史记录...");
-    setIsLoadingHistory(true);
-    try {
-      const response = await fetch("/api/user/history?type=keyword&limit=5", {
-        method: "GET",
-        credentials: "include",
-      });
-
-      console.log("📡 历史记录API响应状态:", response.status);
-      const data = await response.json();
-      console.log("📊 历史记录API响应数据:", data);
-
-      if (data.success && data.data && data.data.analyses) {
-        // 设置关键词分析记录 - 注意这里应该是 data.data.analyses
-        setKeywordHistory(data.data.analyses);
-        console.log(
-          "✅ 成功加载关键词分析历史记录:",
-          data.data.analyses.length,
-          "条",
-        );
-        console.log("📋 历史记录详情:", data.data.analyses);
-      } else {
-        console.log("⚠️ 没有找到关键词分析历史记录");
-        setKeywordHistory([]);
-      }
-    } catch (error) {
-      console.error("❌ 加载历史记录失败:", error);
-      setKeywordHistory([]);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  };
-
-  // 当用户登录状态改变时，加载历史记录
-  useEffect(() => {
-    if (isLoggedIn && !isCheckingAuth) {
-      loadKeywordHistory();
-    } else {
-      setKeywordHistory([]);
-    }
-  }, [isLoggedIn, isCheckingAuth]);
-
-  const handlePlatformSelect = (platform: Platform) => {
+    const handlePlatformSelect = (platform: Platform) => {
     setSelectedPlatform(platform);
   };
 
-  // 瞬间定位到目标位置
-  const jumpToElement = (elementId: string) => {
-    setTimeout(() => {
-      const element = document.getElementById(elementId);
-      console.log("🎯 尝试跳转到元素:", elementId, element);
-      if (element) {
-        const elementRect = element.getBoundingClientRect();
-        const elementTop = elementRect.top + window.pageYOffset;
-        const targetScrollY = elementTop - 100; // 定位到元素顶部上方100px处
-
-        console.log("📍 跳转位置:", targetScrollY);
-        window.scrollTo({
-          top: targetScrollY,
-          behavior: "instant", // 瞬间跳转
-        });
-      } else {
-        console.log("❌ 未找到目标元素:", elementId);
-      }
-    }, 200); // 增加延迟确保DOM完全更新
-  };
 
   const handleAnalyze = async () => {
     if (!keyword.trim()) return;
@@ -188,7 +83,7 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
         setAnalysisResult(data.data);
         // 分析完成后刷新历史记录
         if (isLoggedIn) {
-          loadKeywordHistory();
+          refreshHistory();
         }
         // 瞬间跳转到分析结果区域
         jumpToElement("analysis-result");
@@ -257,94 +152,7 @@ function KeywordsAnalysisContent({ searchParams }: { searchParams: any }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <a href="/" className="text-2xl font-bold text-gray-900">
-                HotOrNot
-              </a>
-              <span className="ml-2 text-sm text-gray-500">关键词分析</span>
-            </div>
-            <div className="flex items-center space-x-8">
-              <nav className="hidden md:flex space-x-8">
-                <a href="/" className="text-gray-700 hover:text-gray-900">
-                  内容分析
-                </a>
-                <a
-                  href="/analysis/account"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  账号分析
-                </a>
-                <a
-                  href="/analysis/keywords"
-                  className="text-purple-700 font-medium"
-                >
-                  关键词分析
-                </a>
-                <a
-                  href="/dashboard"
-                  className="text-gray-700 hover:text-gray-900"
-                >
-                  数据大屏
-                </a>
-              </nav>
-              <MobileNav />
-
-              {/* 用户状态 */}
-              <div className="flex items-center">
-                {isCheckingAuth ? (
-                  <div className="text-sm text-gray-500">
-                    <div className="w-4 h-4 border-2 border-gray-300 border-t-purple-600 rounded-full animate-spin"></div>
-                  </div>
-                ) : isLoggedIn ? (
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                        {user?.displayName?.[0] || user?.username?.[0] || "U"}
-                      </div>
-                      <div className="hidden md:block text-sm">
-                        <div className="font-medium text-gray-900">
-                          {user?.displayName || user?.username}
-                        </div>
-                        <div className="text-gray-500 text-xs">
-                          {user?.subscription?.plan || "free"} · 已登录
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <a
-                        href="/history"
-                        className="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md px-3 py-1 hover:border-gray-400 transition-colors"
-                      >
-                        历史记录
-                      </a>
-                      <button
-                        onClick={handleLogout}
-                        className="text-sm text-gray-600 hover:text-gray-900 border border-gray-300 rounded-md px-3 py-1 hover:border-gray-400 transition-colors"
-                      >
-                        登出
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-3">
-                    <div className="text-sm text-gray-500">匿名模式</div>
-                    <a
-                      href="/auth"
-                      className="text-sm bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
-                    >
-                      登录/注册
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader activePath="/analysis/keywords" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
