@@ -12,6 +12,7 @@ const NAV_LINKS = [
   { href: "/dashboard", label: "数据大屏" },
   { href: "/dashboard/my", label: "我的面板" },
   { href: "/teams", label: "团队协作" },
+  { href: "/developer", label: "开发者" },
 ];
 
 export function MobileNav() {
