@@ -207,7 +207,7 @@ export default function DashboardPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {item.icon && (
-                            <img
+                            <img loading="lazy" loading="lazy"
                               src={item.icon}
                               alt=""
                               className="w-4 h-4 rounded"
@@ -291,7 +291,7 @@ export default function DashboardPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           {item.icon && (
-                            <img
+                            <img loading="lazy" loading="lazy"
                               src={item.icon}
                               alt=""
                               className="w-4 h-4 rounded"

@@ -5,16 +5,11 @@ const nextConfig = {
   transpilePackages: ["@hotornot/shared", "@hotornot/ui", "@hotornot/ai", "@hotornot/database"],
   output: 'standalone',
   images: {
-    domains: [
-      'sns-img-hw.xhscdn.com',
-      'sns-video-hw.xhscdn.com',
-      'i0.hdslb.com',
-      'i1.hdslb.com',
-      'i2.hdslb.com',
-      'wx1.sinaimg.cn',
-      'wx2.sinaimg.cn',
-      'wx3.sinaimg.cn',
-      'wx4.sinaimg.cn'
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.xhscdn.com' },
+      { protocol: 'https', hostname: '*.hdslb.com' },
+      { protocol: 'https', hostname: '*.sinaimg.cn' },
+      { protocol: 'https', hostname: '*.douyinpic.com' },
     ],
   },
   env: {

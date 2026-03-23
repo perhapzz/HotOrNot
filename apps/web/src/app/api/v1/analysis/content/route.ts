@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateApiKey, hasPermission, ApiKeyContext } from "../../../../lib/api-key-auth";
+import { validateApiKey, hasPermission, ApiKeyContext } from "@/lib/api-key-auth";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { ContentAnalysis } from "@hotornot/database";
 
@@ -24,16 +24,17 @@ export async function POST(request: NextRequest) {
       .sort({ createdAt: -1 })
       .lean();
 
-    if (existing) {
+    const doc = existing as any;
+    if (doc) {
       return NextResponse.json({
         success: true,
         data: {
-          id: existing._id,
-          url: existing.url,
-          platform: existing.platform,
-          title: existing.title,
-          analysis: existing.analysis,
-          createdAt: existing.createdAt,
+          id: doc._id,
+          url: doc.url,
+          platform: doc.platform,
+          title: doc.title,
+          analysis: doc.analysis,
+          createdAt: doc.createdAt,
         },
       });
     }
