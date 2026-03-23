@@ -1,16 +1,8 @@
+import { getUserFromRequest } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { Team } from "@hotornot/database";
 
-function getUserIdFromToken(request: NextRequest): string | null {
-  const token = request.cookies.get("auth-token")?.value;
-  if (!token) return null;
-  try {
-    return JSON.parse(Buffer.from(token, "base64").toString()).userId;
-  } catch {
-    return null;
-  }
-}
 
 // POST /api/teams/[teamId]/members — join via invite code or add member
 export async function POST(
@@ -19,7 +11,7 @@ export async function POST(
 ) {
   try {
     await connectDatabase();
-    const userId = getUserIdFromToken(request);
+    const userId = getUserFromRequest(request)?.userId ?? null;
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
@@ -75,7 +67,7 @@ export async function DELETE(
 ) {
   try {
     await connectDatabase();
-    const userId = getUserIdFromToken(request);
+    const userId = getUserFromRequest(request)?.userId ?? null;
     if (!userId) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/auth";
 import {
   ContentAnalysis,
   AccountAnalysis,
@@ -7,26 +8,15 @@ import {
 } from "@hotornot/database";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 
-// 获取用户信息的辅助函数
-async function getUserFromToken(request: NextRequest) {
-  try {
-    const token = request.cookies.get("auth-token")?.value;
-    if (!token) return null;
 
-    const payload = JSON.parse(Buffer.from(token, "base64").toString());
-    const user = await User.findById(payload.userId);
-    return user;
-  } catch (error) {
-    return null;
-  }
-}
 
 export async function GET(request: NextRequest) {
   try {
     await connectDatabase();
 
     // 获取用户信息
-    const user = await getUserFromToken(request);
+    const authPayload = getUserFromRequest(request);
+    const user = authPayload ? await User.findById(authPayload.userId) : null;
     if (!user) {
       return NextResponse.json(
         { success: false, error: "请先登录" },
@@ -443,7 +433,8 @@ export async function DELETE(request: NextRequest) {
     await connectDatabase();
 
     // 获取用户信息
-    const user = await getUserFromToken(request);
+    const authPayload = getUserFromRequest(request);
+    const user = authPayload ? await User.findById(authPayload.userId) : null;
     if (!user) {
       return NextResponse.json(
         { success: false, error: "请先登录" },

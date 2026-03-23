@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getUserFromRequest } from "@/lib/auth";
 import { createAIServiceFromEnv } from "@hotornot/ai";
 import { UrlUtils, Platform, ContentType } from "@hotornot/shared";
 import { ContentAnalysisRequestSchema } from "@hotornot/shared";
@@ -328,19 +329,7 @@ function extractDouyinAwemeId(url: string): string | null {
   }
 }
 
-// 获取用户信息的辅助函数
-async function getUserFromToken(request: NextRequest) {
-  try {
-    const token = request.cookies.get("auth-token")?.value;
-    if (!token) return null;
 
-    const payload = JSON.parse(Buffer.from(token, "base64").toString());
-    const user = await User.findById(payload.userId);
-    return user;
-  } catch (error) {
-    return null;
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -348,7 +337,8 @@ export async function POST(request: NextRequest) {
     await connectDatabase();
 
     // 获取用户信息（如果已登录）
-    const user = await getUserFromToken(request);
+    const authPayload = getUserFromRequest(request);
+    const user = authPayload ? await User.findById(authPayload.userId) : null;
 
     // 解析请求体
     const body = await request.json();
