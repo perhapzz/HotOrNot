@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { Providers } from "./providers";
 
 // 导入服务器端初始化脚本
 import "../lib/init-server";
@@ -52,7 +53,9 @@ export default function RootLayout({
     <html lang="zh-CN">
       <body className={inter.className}>
         <div className="min-h-screen bg-background">
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <Providers>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </Providers>
         </div>
       </body>
     </html>

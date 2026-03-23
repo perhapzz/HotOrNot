@@ -2,20 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from './lib/rate-limiter';
 
 /**
- * Next.js Middleware — API 限流
- *
- * 对所有 /api/* 路由进行速率限制。
- * 超限返回 429 + Retry-After header + JSON body。
+ * Next.js Middleware — API rate limiting + request logging
  */
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 仅对 API 路由生效
   if (!pathname.startsWith('/api')) {
     return NextResponse.next();
   }
 
-  // 获取客户端 IP
+  const start = Date.now();
+  const method = request.method;
   const ip =
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     request.headers.get('x-real-ip') ||
@@ -25,6 +22,8 @@ export function middleware(request: NextRequest) {
   const result = checkRateLimit(ip, pathname);
 
   if (!result.allowed) {
+    const duration = Date.now() - start;
+    logRequest(method, pathname, 429, duration);
     return NextResponse.json(
       {
         success: false,
@@ -43,12 +42,47 @@ export function middleware(request: NextRequest) {
     );
   }
 
-  // 放行并附加限流 header
   const response = NextResponse.next();
   response.headers.set('X-RateLimit-Limit', String(result.limit));
   response.headers.set('X-RateLimit-Remaining', String(result.remaining));
 
+  // Cache-Control for cacheable GET routes
+  if (request.method === 'GET') {
+    if (pathname.startsWith('/api/hotlist')) {
+      response.headers.set('Cache-Control', 'public, s-maxage=180, stale-while-revalidate=600');
+    } else if (pathname.startsWith('/api/dashboard')) {
+      response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    } else if (pathname.startsWith('/api/cache/config')) {
+      response.headers.set('Cache-Control', 'public, s-maxage=300');
+    } else if (pathname.startsWith('/api/health')) {
+      response.headers.set('Cache-Control', 'no-cache');
+    }
+  }
+
+  const duration = Date.now() - start;
+  logRequest(method, pathname, 200, duration);
+
   return response;
+}
+
+/**
+ * Log API request (uses console directly since logger may not be available in Edge runtime)
+ */
+function logRequest(method: string, path: string, status: number, durationMs: number) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  if (isProduction) {
+    console.log(JSON.stringify({
+      timestamp: new Date().toISOString(),
+      level: 'info',
+      context: 'api-request',
+      method,
+      path,
+      status,
+      durationMs,
+    }));
+  } else {
+    console.log(`→ ${method} ${path} ${status} ${durationMs}ms`);
+  }
 }
 
 export const config = {

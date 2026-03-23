@@ -5,6 +5,7 @@ import { Platform } from "@hotornot/shared";
 import { getPlatformDisplayName } from "@/lib/platform-utils";
 import SearchParamsWrapper from "@/components/SearchParamsWrapper";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { MobileNav } from "@/components/MobileNav";
 
 function HomePageContent({ searchParams }: { searchParams: any }) {
   const [url, setUrl] = useState("");
@@ -162,14 +163,14 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-sm border-b relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-gray-900">HotOrNot</h1>
               <span className="ml-2 text-sm text-gray-500">内容分析平台</span>
             </div>
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-4 md:space-x-8">
               <nav className="hidden md:flex space-x-8">
                 <a href="/" className="text-blue-700 font-medium">
                   内容分析
@@ -193,6 +194,8 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                   数据大屏
                 </a>
               </nav>
+
+              <MobileNav />
 
               {/* 用户状态 - 可选登录 */}
               <div className="flex items-center">
@@ -250,7 +253,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl md:text-5xl">
             发现内容
             <span className="text-blue-600">爆款密码</span>
           </h1>
@@ -261,7 +264,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
 
         {/* 分析工具 */}
         <div className="mt-12 max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8">
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 开始内容分析
@@ -279,19 +282,19 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                 >
                   内容链接
                 </label>
-                <div className="flex rounded-md shadow-sm">
+                <div className="flex flex-col sm:flex-row rounded-md shadow-sm">
                   <input
                     type="url"
                     id="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    className="flex-1 min-w-0 block w-full px-4 py-3 rounded-l-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="flex-1 min-w-0 block w-full px-4 py-3 rounded-t-md sm:rounded-l-md sm:rounded-tr-none border border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm"
                     placeholder="粘贴抖音、小红书等平台的内容链接..."
                   />
                   <button
                     onClick={handleAnalyze}
                     disabled={!url.trim() || isAnalyzing}
-                    className="inline-flex items-center px-6 py-3 border border-l-0 border-gray-300 rounded-r-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-t-0 sm:border-t sm:border-l-0 border-gray-300 rounded-b-md sm:rounded-r-md sm:rounded-bl-none bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isAnalyzing ? (
                       <>
@@ -398,7 +401,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                       )}
                       {/* 互动指标：点赞、评论、分享 - 与上方内容信息宽度对齐 */}
                       <div className="bg-gradient-to-r from-green-50 to-purple-50 rounded-lg p-4">
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                           <div className="text-center">
                             <p className="text-2xl font-bold text-green-600">
                               {analysisResult.content.metrics.likes.toLocaleString()}
@@ -515,7 +518,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
             </div>
 
             {isLoadingHistory ? (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 text-center">
                 <div className="loading-spinner w-6 h-6 mx-auto mb-4"></div>
                 <p className="text-gray-600">加载历史记录中...</p>
               </div>
@@ -642,7 +645,7 @@ function HomePageContent({ searchParams }: { searchParams: any }) {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg
                     className="w-8 h-8 text-blue-600"

@@ -298,6 +298,11 @@ UserAnalysisRecordSchema.virtual("identifier").get(function () {
   return this.userId || this.sessionId || this.userIP;
 });
 
+// Compound indexes for common query patterns
+UserAnalysisRecordSchema.index({ userId: 1, createdAt: -1 });
+UserAnalysisRecordSchema.index({ sessionId: 1 });
+UserAnalysisRecordSchema.index({ analysisType: 1, status: 1, createdAt: -1 });
+
 UserAnalysisRecordSchema.virtual("duration").get(function () {
   if (this.completedAt && this.createdAt) {
     return this.completedAt.getTime() - this.createdAt.getTime();
