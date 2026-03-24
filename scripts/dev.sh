@@ -32,10 +32,10 @@ if [ ! -d "node_modules" ]; then
 fi
 
 # 检查环境配置文件
-if [ ! -f ".env.local" ]; then
-  echo "⚠️  .env.local 文件不存在，请参考 README.md 配置环境变量"
+if [ ! -f "apps/web/.env.local" ]; then
+  echo "⚠️  apps/web/.env.local 文件不存在，请参考 README.md 配置环境变量"
   echo "📝 创建示例配置文件..."
-  cp .env.local .env.local.example 2>/dev/null || echo "DATABASE_URL=mongodb://localhost:27017/hotornot" > .env.local.example
+  cp apps/web/.env.example apps/web/.env.local 2>/dev/null || echo "DATABASE_URL=mongodb://localhost:27017/hotornot" > apps/web/.env.local
 fi
 
 # 启动开发服务器
