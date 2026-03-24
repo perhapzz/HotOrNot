@@ -1,5 +1,6 @@
 {
   "name": "@hotornot/web",
+  "description": "Next.js 14 web application",
   "version": "0.1.0",
   "private": true,
   "scripts": {

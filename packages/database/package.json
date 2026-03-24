@@ -1,5 +1,6 @@
 {
   "name": "@hotornot/database",
+  "description": "MongoDB models and database connection layer",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",

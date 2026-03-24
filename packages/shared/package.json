@@ -1,5 +1,6 @@
 {
   "name": "@hotornot/shared",
+  "description": "Shared types, constants, schemas, and utilities",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
