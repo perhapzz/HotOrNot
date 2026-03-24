@@ -130,3 +130,9 @@ coverage/
 .env.local.backup
 # Internal handoff files
 .handoff/
+
+# Sensitive files
+cookies.txt
+
+# Development logs (optional, remove if you want to track)
+DEVELOPMENT_LOG.md
