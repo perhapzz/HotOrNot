@@ -1,5 +1,3 @@
-import { jsPDF } from "jspdf";
-
 interface ExportData {
   type: string;
   title: string;
@@ -14,7 +12,8 @@ interface ExportData {
   metrics?: Record<string, number>;
 }
 
-export function generatePDF(data: ExportData): Buffer {
+export async function generatePDF(data: ExportData): Promise<Buffer> {
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   let y = 20;
   const lineHeight = 8;

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase, BatchAnalysis } from "@hotornot/database";
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +27,7 @@ export async function GET(
         totalItems: job.totalItems,
         completedItems: job.completedItems,
         failedItems: job.failedItems,
-        items: job.items.map((item) => ({
+        items: job.items.map((item: any) => ({
           index: item.index,
           input: item.input,
           status: item.status,

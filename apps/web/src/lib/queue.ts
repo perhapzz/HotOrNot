@@ -15,37 +15,62 @@ function parseRedisConnection(url: string) {
   }
 }
 
-const connection = parseRedisConnection(REDIS_URL);
+// Lazy-init: don't connect to Redis at import time (breaks next build)
+let _analysisQueue: Queue | null = null;
+let _emailQueue: Queue | null = null;
+let _hotlistQueue: Queue | null = null;
 
-// ==================== Queues ====================
+function getConnection() {
+  return parseRedisConnection(REDIS_URL);
+}
 
-export const analysisQueue = new Queue("analysis", {
-  connection,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: { type: "exponential", delay: 2000 },
-    removeOnComplete: { count: 100 },
-    removeOnFail: { count: 50 },
-  },
-});
+export function getAnalysisQueue(): Queue {
+  if (!_analysisQueue) {
+    _analysisQueue = new Queue("analysis", {
+      connection: getConnection(),
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 2000 },
+        removeOnComplete: { count: 100 },
+        removeOnFail: { count: 50 },
+      },
+    });
+  }
+  return _analysisQueue;
+}
 
-export const emailQueue = new Queue("email", {
-  connection,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: { type: "exponential", delay: 5000 },
-    removeOnComplete: { count: 200 },
-    removeOnFail: { count: 50 },
-  },
-});
+export function getEmailQueue(): Queue {
+  if (!_emailQueue) {
+    _emailQueue = new Queue("email", {
+      connection: getConnection(),
+      defaultJobOptions: {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 5000 },
+        removeOnComplete: { count: 200 },
+        removeOnFail: { count: 50 },
+      },
+    });
+  }
+  return _emailQueue;
+}
 
-export const hotlistQueue = new Queue("hotlist", {
-  connection,
-  defaultJobOptions: {
-    attempts: 2,
-    removeOnComplete: { count: 10 },
-  },
-});
+export function getHotlistQueue(): Queue {
+  if (!_hotlistQueue) {
+    _hotlistQueue = new Queue("hotlist", {
+      connection: getConnection(),
+      defaultJobOptions: {
+        attempts: 2,
+        removeOnComplete: { count: 10 },
+      },
+    });
+  }
+  return _hotlistQueue;
+}
+
+// Keep old names as getters for backwards compat
+export const analysisQueue = { get queue() { return getAnalysisQueue(); } };
+export const emailQueue = { get queue() { return getEmailQueue(); } };
+export const hotlistQueue = { get queue() { return getHotlistQueue(); } };
 
 // ==================== Job submission helpers ====================
 
@@ -62,21 +87,21 @@ export interface EmailJobData {
 }
 
 export async function submitAnalysisJob(data: AnalysisJobData): Promise<string> {
-  const job = await analysisQueue.add("analyze", data, {
+  const job = await getAnalysisQueue().add("analyze", data, {
     priority: data.type === "content" ? 1 : 2,
   });
   return job.id!;
 }
 
 export async function submitEmailJob(data: EmailJobData): Promise<string> {
-  const job = await emailQueue.add("send", data);
+  const job = await getEmailQueue().add("send", data);
   return job.id!;
 }
 
 // ==================== Queue status ====================
 
 export async function getQueueStatus(queueName: string) {
-  const q = queueName === "analysis" ? analysisQueue : queueName === "email" ? emailQueue : hotlistQueue;
+  const q = queueName === "analysis" ? getAnalysisQueue() : queueName === "email" ? getEmailQueue() : getHotlistQueue();
   const [waiting, active, completed, failed] = await Promise.all([
     q.getWaitingCount(),
     q.getActiveCount(),
@@ -96,7 +121,7 @@ export function createAnalysisWorker(
   processor: (job: Job<AnalysisJobData>) => Promise<any>
 ) {
   return new Worker("analysis", processor, {
-    connection,
+    connection: getConnection(),
     concurrency: 3,
   });
 }
@@ -105,7 +130,7 @@ export function createEmailWorker(
   processor: (job: Job<EmailJobData>) => Promise<any>
 ) {
   return new Worker("email", processor, {
-    connection,
+    connection: getConnection(),
     concurrency: 5,
   });
 }

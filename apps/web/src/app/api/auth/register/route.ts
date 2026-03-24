@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { User } from "@hotornot/database";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { hashPassword } from "../../../../lib/auth";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {

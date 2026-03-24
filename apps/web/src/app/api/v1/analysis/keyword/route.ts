@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateApiKey, hasPermission, ApiKeyContext } from "@/lib/api-key-auth";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { KeywordAnalysis } from "@hotornot/database";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const authResult = await validateApiKey(request);

@@ -36,11 +36,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     console.error('[ErrorBoundary] 捕获到错误:', error);
     console.error('[ErrorBoundary] 组件栈:', errorInfo.componentStack);
 
-    // Report to Sentry if available
-    try {
-      const Sentry = require('@sentry/nextjs');
-      Sentry.captureException(error, { contexts: { react: { componentStack: errorInfo.componentStack } } });
-    } catch {}
+    // Error logging (add Sentry or other error reporting here)
+    console.error('[ErrorBoundary] Error details:', {
+      message: error.message,
+      componentStack: errorInfo.componentStack,
+    });
 
     this.props.onError?.(error, errorInfo);
   }

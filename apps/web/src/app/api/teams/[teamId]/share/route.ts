@@ -2,6 +2,7 @@ import { getUserFromRequest } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { Team, SharedAnalysis } from "@hotornot/database";
+export const dynamic = "force-dynamic";
 
 
 // POST /api/teams/[teamId]/share — share analysis to team

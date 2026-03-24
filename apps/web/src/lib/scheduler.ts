@@ -98,3 +98,39 @@ export function getTaskStatuses(): Array<{
 export function getTaskNames(): string[] {
   return Array.from(tasks.keys());
 }
+
+// ==================== Hotlist Scheduler Facade ====================
+// Provides start/getStatus interface expected by init-server and admin/init route.
+
+export const hotlistScheduler = {
+  async start(): Promise<void> {
+    // Register the hotlist update task if not already registered
+    if (!tasks.has("hotlist-update")) {
+      const THREE_HOURS = 3 * 60 * 60 * 1000;
+      registerTask(
+        "hotlist-update",
+        "自动更新小红书和抖音热点数据",
+        THREE_HOURS,
+        async () => {
+          // Trigger hotlist updates via internal API
+          const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+          await Promise.allSettled([
+            fetch(`${baseUrl}/api/hotlist/xiaohongshu`, { method: "POST" }),
+            fetch(`${baseUrl}/api/hotlist/douyin`, { method: "POST" }),
+          ]);
+        },
+      );
+    }
+  },
+
+  getStatus(): {
+    isRunning: boolean;
+    tasks: ReturnType<typeof getTaskStatuses>;
+  } {
+    const statuses = getTaskStatuses();
+    return {
+      isRunning: statuses.some((t) => t.enabled),
+      tasks: statuses,
+    };
+  },
+};

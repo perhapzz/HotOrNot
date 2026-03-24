@@ -7,6 +7,7 @@ import {
   User,
 } from "@hotornot/database";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
+export const dynamic = "force-dynamic";
 
 
 

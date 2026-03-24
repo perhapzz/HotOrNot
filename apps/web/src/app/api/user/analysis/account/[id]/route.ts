@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUserFromRequest } from "@/lib/auth";
 import { AccountAnalysis, User, UserAnalysisRecord } from "@hotornot/database";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
+export const dynamic = "force-dynamic";
 
 
 

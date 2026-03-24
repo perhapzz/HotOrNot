@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { XiaohongshuHotList, connectDatabase } from "@hotornot/database";
 import { getCacheConfig, isCacheExpired } from "../../../../lib/cache-manager";
+export const dynamic = "force-dynamic";
 
 // 获取小红书热点数据的API函数
 async function fetchXiaohongshuHotList() {

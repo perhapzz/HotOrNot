@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hotlistScheduler } from "../../../../lib/scheduler";
 import { requireAdmin } from "../../../../lib/auth";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   const authResult = requireAdmin(request);

@@ -14,6 +14,7 @@ import {
   getCacheExpiration,
   getCacheAge,
 } from "../../../../lib/cache-manager";
+export const dynamic = "force-dynamic";
 
 // TikHub API调用函数 - 获取抖音单个视频详细数据
 async function fetchDouyinSingleVideo(awemeId: string) {

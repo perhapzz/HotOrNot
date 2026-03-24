@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DouyinHotList, connectDatabase } from "@hotornot/database";
 import { getCacheConfig, isCacheExpired } from "../../../../lib/cache-manager";
+export const dynamic = "force-dynamic";
 
 // 获取抖音热点数据的API函数
 async function fetchDouyinHotList() {

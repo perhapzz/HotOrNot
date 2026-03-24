@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateApiKey, hasPermission, ApiKeyContext } from "../../../../../lib/api-key-auth";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import mongoose from "mongoose";
+export const dynamic = "force-dynamic";
 
 const MODEL_MAP: Record<string, string> = {
   douyin: "DouyinHotList",

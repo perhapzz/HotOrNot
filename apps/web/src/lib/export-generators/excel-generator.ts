@@ -1,5 +1,3 @@
-import * as XLSX from "xlsx";
-
 interface ExportData {
   type: string;
   title: string;
@@ -15,7 +13,8 @@ interface ExportData {
   metrics?: Record<string, number>;
 }
 
-export function generateExcel(data: ExportData): Buffer {
+export async function generateExcel(data: ExportData): Promise<Buffer> {
+  const XLSX = await import("xlsx");
   const wb = XLSX.utils.book_new();
 
   // Overview sheet

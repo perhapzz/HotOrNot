@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase, BatchAnalysis } from "@hotornot/database";
 import { generateJobId, processBatchJob } from "@/lib/batch-processor";
+export const dynamic = "force-dynamic";
 
 const MAX_BATCH_SIZE = 10;
 

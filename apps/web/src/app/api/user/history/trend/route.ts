@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { requireAuth } from "@/lib/auth";
 import mongoose from "mongoose";
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const authResult = requireAuth(request);

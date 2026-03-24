@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { Subscription } from "@hotornot/database";
 import { requireAuth } from "@/lib/auth";
+export const dynamic = "force-dynamic";
 
 const MAX_SUBSCRIPTIONS = 20;
 

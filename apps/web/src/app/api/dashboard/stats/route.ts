@@ -6,6 +6,7 @@ import {
   connectDatabase,
 } from "@hotornot/database";
 import { Platform } from "@hotornot/shared";
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {

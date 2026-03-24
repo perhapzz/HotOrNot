@@ -5,6 +5,7 @@ import { Platform } from "@hotornot/shared";
 import {
   KeywordAnalysis,
   UserAnalysisRecord,
+  User,
   connectDatabase,
 } from "@hotornot/database";
 import { XiaohongshuKeywordParser } from "../../../../lib/xiaohongshu-keyword-parser";
@@ -14,6 +15,7 @@ import {
   getCacheExpiration,
   getCacheAge,
 } from "../../../../lib/cache-manager";
+export const dynamic = "force-dynamic";
 
 // 定义搜索结果的类型
 interface KeywordSearchResult {

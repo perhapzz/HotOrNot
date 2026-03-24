@@ -14,8 +14,8 @@ import {
   getCacheExpiration,
   getCacheAge,
 } from "../../../../lib/cache-manager";
-import { getUserFromRequest } from "../../../../lib/auth";
 import { User } from "@hotornot/database";
+export const dynamic = "force-dynamic";
 
 // 简化的账号ID提取函数
 function extractAccountId(url: string, platform: Platform): string | null {

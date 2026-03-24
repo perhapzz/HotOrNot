@@ -1,9 +1,8 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { connectDatabase } from "@hotornot/database/src/utils/connection";
-import { ContentAnalysis, AccountAnalysis } from "@hotornot/database";
 
-export const runtime = "edge";
+// No edge runtime — Mongoose needs Node.js runtime
+// DB connection is lazy (only at request time, not build time)
 
 export async function GET(
   request: NextRequest,
@@ -16,6 +15,9 @@ export async function GET(
   let subtitle = "";
 
   try {
+    const { connectDatabase } = await import("@hotornot/database");
+    const { ContentAnalysis, AccountAnalysis } = await import("@hotornot/database");
+
     await connectDatabase();
 
     if (type === "content") {

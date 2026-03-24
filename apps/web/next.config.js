@@ -1,5 +1,3 @@
-const { withSentryConfig } = require("@sentry/nextjs");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ["@hotornot/shared", "@hotornot/ui", "@hotornot/ai", "@hotornot/database"],
@@ -19,17 +17,13 @@ const nextConfig = {
     AZURE_OPENAI_API_KEY: process.env.AZURE_OPENAI_API_KEY,
     REDIS_URL: process.env.REDIS_URL,
   },
-  // 跳过构建时的健康检查，避免数据库连接错误
   skipTrailingSlashRedirect: true,
-  // 禁用在构建时预渲染API路由
   experimental: {
     serverComponentsExternalPackages: ['mongoose'],
     optimizePackageImports: ['@hotornot/shared', '@hotornot/ui'],
   },
-  // Compress responses
   compress: true,
 
-  // Security headers
   async headers() {
     return [
       {
@@ -43,7 +37,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data:",
-              "connect-src 'self' https://api.tikhub.io https://*.sentry.io",
+              "connect-src 'self' https://api.tikhub.io",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
@@ -61,14 +55,18 @@ const nextConfig = {
   },
 }
 
-module.exports = withSentryConfig(nextConfig, {
-  // Sentry webpack plugin options
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-}, {
-  // Sentry SDK options
-  widenClientFileUpload: true,
-  hideSourceMaps: true,
-  disableLogger: true,
-});
+// Optional Sentry integration — only wrap if @sentry/nextjs is installed
+try {
+  const { withSentryConfig } = require("@sentry/nextjs");
+  module.exports = withSentryConfig(nextConfig, {
+    silent: true,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+  }, {
+    widenClientFileUpload: true,
+    hideSourceMaps: true,
+    disableLogger: true,
+  });
+} catch {
+  module.exports = nextConfig;
+}

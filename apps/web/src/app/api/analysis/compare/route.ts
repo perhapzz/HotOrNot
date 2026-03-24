@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { requireAuth } from "@/lib/auth";
 import { trackActivity } from "@/lib/activity-tracker";
+export const dynamic = "force-dynamic";
 
 const MAX_COMPARE = 5;
 const MAX_CONCURRENCY = 3;

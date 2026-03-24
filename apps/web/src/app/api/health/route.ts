@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { checkDatabaseHealth, connectDatabase } from "@hotornot/database";
 import { createAIServiceFromEnv } from "@hotornot/ai";
 import mongoose from "mongoose";
-
 export const dynamic = "force-dynamic";
+
 
 export async function GET() {
   const start = Date.now();

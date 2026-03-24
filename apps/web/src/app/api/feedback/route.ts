@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDatabase } from "@hotornot/database/src/utils/connection";
 import { Feedback } from "@hotornot/database";
 import { getUserFromRequest } from "@/lib/auth";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   await connectDatabase();

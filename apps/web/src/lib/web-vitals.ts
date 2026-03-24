@@ -1,6 +1,6 @@
 'use client';
 
-import { onCLS, onFID, onLCP, onTTFB, onINP, type Metric } from 'web-vitals';
+import { onCLS, onLCP, onTTFB, onINP, type Metric } from 'web-vitals';
 
 export type VitalsReporter = (metric: Metric) => void;
 
@@ -50,7 +50,6 @@ const defaultReporter: VitalsReporter = (metric) => {
  */
 export function reportWebVitals(reporter: VitalsReporter = defaultReporter): void {
   onCLS(reporter);
-  onFID(reporter);
   onLCP(reporter);
   onTTFB(reporter);
   onINP(reporter);

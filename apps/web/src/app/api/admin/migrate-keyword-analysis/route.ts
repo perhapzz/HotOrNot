@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { KeywordAnalysis } from "@hotornot/database";
-import { requireAdmin } from "../../../../../lib/auth";
+import { requireAdmin } from "../../../../lib/auth";
 
 export async function POST(request: NextRequest) {
   const authResult = requireAdmin(request);

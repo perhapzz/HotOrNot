@@ -6,6 +6,7 @@ import {
 } from "@hotornot/database";
 import { generateExcel } from "@/lib/export-generators/excel-generator";
 import { generatePDF } from "@/lib/export-generators/pdf-generator";
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: NextRequest,
@@ -20,7 +21,7 @@ export async function GET(
     let exportData: any;
 
     if (type === "content") {
-      const record = await ContentAnalysis.findById(id).lean();
+      const record: any = await ContentAnalysis.findById(id).lean();
       if (!record) {
         return NextResponse.json(
           { success: false, error: "Record not found" },
@@ -40,7 +41,7 @@ export async function GET(
         analysis: record.analysis,
       };
     } else if (type === "keyword") {
-      const record = await KeywordAnalysis.findById(id).lean();
+      const record: any = await KeywordAnalysis.findById(id).lean();
       if (!record) {
         return NextResponse.json(
           { success: false, error: "Record not found" },
@@ -78,16 +79,16 @@ export async function GET(
     const filename = `HotOrNot_${type}_${dateStr}`;
 
     if (format === "pdf") {
-      const buffer = generatePDF(exportData);
-      return new NextResponse(buffer, {
+      const buffer = await generatePDF(exportData);
+      return new NextResponse(new Uint8Array(buffer), {
         headers: {
           "Content-Type": "application/pdf",
           "Content-Disposition": `attachment; filename="${filename}.pdf"`,
         },
       });
     } else {
-      const buffer = generateExcel(exportData);
-      return new NextResponse(buffer, {
+      const buffer = await generateExcel(exportData);
+      return new NextResponse(new Uint8Array(buffer), {
         headers: {
           "Content-Type":
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
