@@ -1,5 +1,6 @@
 {
   "name": "@hotornot/ai",
+  "description": "AI provider abstraction layer (OpenAI, Gemini)",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",

@@ -1,5 +1,6 @@
 {
   "name": "hotornot",
+  "description": "AI-powered content analysis platform for Chinese social media",
   "private": true,
   "scripts": {
     "build": "turbo run build",

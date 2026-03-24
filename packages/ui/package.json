@@ -1,5 +1,6 @@
 {
   "name": "@hotornot/ui",
+  "description": "UI component library (Radix + Tailwind)",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
